@@ -11,85 +11,57 @@ info:
 host: 'localhost:3001'
 tags:
   - name: login
-    description: Logs user into the system
+    description: Login API
   - name: schedules
     description: Operations about schedules
   - name: users
-    description: Operations about user (available to administrators only)
+    description: Operations about users
 schemes:
   - https
-  - http
 paths:
   /login:
-    parameters: []
+    parameters:
+      - $ref: "#/parameters/authorizationHeader"
     get:
+      description: Validate the authorization-header, and get "user_id", "name" and "is_admin".
       summary: login
       operationId: loginUser
       responses:
         '200':
           description: OK
           schema:
-            type: object
-            properties:
-              user_id:
-                type: integer
-              name:
-                type: string
-              is_admin:
-                type: string
-              fails_count:
-                type: integer
-      description: This can only be done by the not logged in user.
-      parameters:
-        - type: string
-          in: header
-          name: Authorization
-          description: 'base64(email:password)'
-          required: true
+            $ref: "#/definitions/loginResponse"
+        '401':
+          $ref: "#/definitions/401"
       tags:
         - login
   /users:
+    parameters:
+      - $ref: "#/parameters/authorizationHeader"
     post:
       summary: POST a user
       tags:
         - users
       description: This can only be done by the logged in administrator.
       operationId: createUser
-      produces:
-        - application/xml
-        - application/json
       parameters:
         - type: string
           in: header
           name: Authorization
           description: 'base64(email:password:is_admin)'
           required: true
-        - in: body
-          name: body
-          schema:
-            type: object
-            properties:
-              name:
-                type: string
-              is_admin:
-                type: string
-              email:
-                type: string
-              password:
-                type: string
-            required:
-              - name
-              - is_admin
-              - email
-              - password
+        - $ref: "#/parameters/newUser"
       responses:
         '200':
-          description: OK
-          schema:
-            type: object
-            properties: {}
-          examples:
-            example-1: {}
+    str      description: OK
+        '400':
+          $ref: "#/definitions/400"
+        '401':
+          $ref: "#/definitions/401"
+        '403':
+          $ref: "#/definitions/403"
+        '404':
+          $ref: "#/definitions/404"
     get:
       summary: GET all users
       tags:
@@ -111,6 +83,14 @@ paths:
                 type: string
               fails_count:
                 type: integer
+        '400':
+          $ref: "#/definitions/400"
+        '401':
+          $ref: "#/definitions/401"
+        '403':
+          $ref: "#/definitions/403"
+        '404':
+          $ref: "#/definitions/404"
       parameters:
         - type: string
           in: header
@@ -120,6 +100,7 @@ paths:
       description: This can only be done by the logged in administrator.
   '/users/{user_id}':
     parameters:
+      - $ref: "#/parameters/authorizationHeader"
       - type: string
         name: user_id
         in: path
@@ -131,7 +112,15 @@ paths:
       operationId: updateUser
       responses:
         '200':
-          description: successful operation
+          description: OK
+        '400':
+          $ref: "#/definitions/400"
+        '401':
+          $ref: "#/definitions/401"
+        '403':
+          $ref: "#/definitions/403"
+        '404':
+          $ref: "#/definitions/404"
       description: This can only be done by the logged in administrator.
       parameters:
         - in: body
@@ -161,7 +150,15 @@ paths:
       operationId: deleteUser
       responses:
         '200':
-          description: successful operation
+          description: OK
+        '400':
+          $ref: "#/definitions/400"
+        '401':
+          $ref: "#/definitions/401"
+        '403':
+          $ref: "#/definitions/403"
+        '404':
+          $ref: "#/definitions/404"
       description: This can only be done by the logged in administrator.
       parameters:
         - type: string
@@ -178,25 +175,16 @@ paths:
       responses:
         '200':
           description: OK
+        '400':
+          $ref: "#/definitions/400"
+        '401':
+          $ref: "#/definitions/401"
+        '403':
+          $ref: "#/definitions/403"
+        '404':
+          $ref: "#/definitions/404"
       parameters:
-        - in: body
-          name: body
-          schema:
-            type: object
-            properties:
-              date:
-                type: string
-              title:
-                type: string
-              started_at:
-                type: string
-              ended_at:
-                type: string
-              detail:
-                type: string
-            required:
-              - date
-              - title
+        - $ref: "#/parameters/newSchedule"
         - type: string
           in: header
           name: Authorization
@@ -206,6 +194,7 @@ paths:
     parameters: []
   '/schedules/{schedule_id}':
     parameters:
+      - $ref: "#/parameters/authorizationHeader"
       - type: integer
         name: schedule_id
         in: path
@@ -220,46 +209,28 @@ paths:
           description: OK
       description: This can only be done by the logged in user.
       parameters:
-        - in: body
-          name: body
-          schema:
-            type: object
-            properties:
-              date:
-                type: string
-              title:
-                type: string
-              started_at:
-                type: string
-              ended_at:
-                type: string
-              detail:
-                type: string
-            required:
-              - date
-              - title
-        - type: string
-          in: header
-          name: Authorization
-          required: true
-          description: 'base64(email:password)'
+        - $ref: "#/parameters/newSchedule"
     delete:
       summary: DELETE a schedule by schedule_id
+      description: This can only be done by the logged in user.
       tags:
         - schedules
       operationId: deleteSchedule
       responses:
         '200':
           description: OK
-      description: This can only be done by the logged in user.
-      parameters:
-        - type: string
-          in: header
-          name: Authorization
-          required: true
-          description: 'base64(email:password)'
+        '400':
+          $ref: "#/definitions/400"
+        '401':
+          $ref: "#/definitions/401"
+        '403':
+          $ref: "#/definitions/403"
+        '404':
+          $ref: "#/definitions/404"
+
   '/schedules/{year}/{month}':
     parameters:
+      - $ref: "#/parameters/authorizationHeader"
       - type: string
         name: year
         in: path
@@ -276,48 +247,23 @@ paths:
         '200':
           description: OK
           schema:
-            type: object
-            properties:
-              schedule_id:
-                type: integer
-              date:
-                type: string
-              title:
-                type: string
-              started_at:
-                type: string
-              ended_at:
-                type: string
-              detail:
-                type: string
+            $ref: "#/definitions/listSchedules"
         '400':
-          description: ''
-          schema:
-            type: object
-            properties: {}
+          $ref: "#/definitions/400"
         '401':
-          description: Unauthorized
-          schema:
-            type: object
-            properties: {}
+          $ref: "#/definitions/401"
+        '403':
+          $ref: "#/definitions/403"
         '404':
-          description: Not Found
-          schema:
-            type: object
-            properties: {}
+          $ref: "#/definitions/404"
       operationId: getSchedules
-      parameters:
-        - type: string
-          in: header
-          name: Authorization
-          description: 'base64(email:password)'
-          required: true
       description: This can only be done by the logged in user.
+
+
 securityDefinitions:
-  Authorization:
-    type: basic
-    description: ''
-definitions: {}
+  # Authorization:
+  #   type: basic
+  #   description: ''
 externalDocs:
   description: Find out more about Swagger
   url: 'http://swagger.io'
@@ -325,3 +271,112 @@ produces:
   - application/json
 consumes:
   - application/json
+
+parameters:
+  authorizationHeader:
+    type: string
+    in: header
+    name: Authorization
+    description: 'base64-encoded "email:password"'
+    required: true
+  newSchedule:
+    in: body
+    name: bodystr
+    schema:
+      type: object
+      properties:
+        date:
+          type: string
+        title:
+          type: string
+        started_at:
+          type: string
+        ended_at:
+          type: string
+        detail:
+          type: string
+      example:
+        date: "20200714"
+        title: "Yamaguro is still in Fukui."
+        started_at: "1800"
+        ended_at: "1830"
+        detail: "I am in Fukui for anothor 1 year"
+  newUser:
+    in: body
+    name: bodystr
+    schema:
+      type: object
+      properties:
+        name:
+          type: string
+        is_admin:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+      required:
+        - name
+        - is_admin
+        - email
+        - password
+      example:
+        name: "yamaguro"
+        is_admin: "false"
+        email: "chirichirige@symitems.com"
+        password: "chirichirige"
+
+definitions:
+  '400':
+    description: |
+      Bad Request
+  '401':
+    description: |
+      Unauthorized
+      Authorization header is incorrect.
+  '403':
+    description: |
+      Forbiddon
+      User don't have permission.
+  '404':
+    description: |
+      Not Found
+      Resource accessed does not exist.
+  loginResponse:
+    type: object
+    properties:
+      user_id:
+        type: integer
+        example: 1
+      name:
+        type: string
+        example: "yamaguro"
+      is_admin:
+        type: boolean
+        example: true
+  scheduleWithId:
+    type: object
+    properties:
+      schedule_id:
+        type: integer
+      date:
+        type: string
+      title:
+        type: string
+      started_at:
+        type: string
+      ended_at:
+        type: string
+      detail:
+        type: string
+    example:
+      schedule_id: 96
+      date: "20200714"
+      example: "Yamaguro is still in Fukui."
+      started_at: "1800"
+      ended_at: "1830"
+      detail: "I am in Fukui for anothor 1 year"
+  listSchedules:
+    items:
+      type: array
+      $ref: "#/definitions/scheduleWithId"
