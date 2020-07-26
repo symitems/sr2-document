@@ -39,66 +39,42 @@ paths:
     parameters:
       - $ref: "#/parameters/authorizationHeader"
     post:
-      summary: POST a user
+      summary: Create new user
       tags:
         - users
-      description: This can only be done by the logged in administrator.
+      description: |
+        Create a new user account.
+        (Available only for administrators)
       operationId: createUser
       parameters:
-        - type: string
-          in: header
-          name: Authorization
-          description: 'base64(email:password:is_admin)'
-          required: true
         - $ref: "#/parameters/newUser"
       responses:
         '200':
-    str      description: OK
+          description: OK
         '400':
           $ref: "#/definitions/400"
         '401':
           $ref: "#/definitions/401"
         '403':
           $ref: "#/definitions/403"
-        '404':
-          $ref: "#/definitions/404"
     get:
       summary: GET all users
+      description: |
+        List all user accounts.
+        (Available only for administrators)
       tags:
         - users
       operationId: getAllUsers
       responses:
         '200':
-          description: successful operation
+          description: OK
           schema:
-            type: object
-            properties:
-              user_id:
-                type: integer
-              name:
-                type: string
-              is_admin:
-                type: string
-              email:
-                type: string
-              fails_count:
-                type: integer
-        '400':
-          $ref: "#/definitions/400"
+            $ref: "#/definitions/userList"
         '401':
           $ref: "#/definitions/401"
         '403':
           $ref: "#/definitions/403"
-        '404':
-          $ref: "#/definitions/404"
-      parameters:
-        - type: string
-          in: header
-          name: Authorization
-          required: true
-          description: 'base64(email:password:is_admin)'
-      description: This can only be done by the logged in administrator.
-  '/users/{user_id}':
+  /users/{user_id}:
     parameters:
       - $ref: "#/parameters/authorizationHeader"
       - type: string
@@ -106,6 +82,9 @@ paths:
         in: path
         required: true
     put:
+      description: |
+        Change an exsisting user account.
+        (Available only for administrators)
       summary: UPDATE a user by user_id
       tags:
         - users
@@ -121,30 +100,13 @@ paths:
           $ref: "#/definitions/403"
         '404':
           $ref: "#/definitions/404"
-      description: This can only be done by the logged in administrator.
       parameters:
-        - in: body
-          name: body
-          schema:
-            type: object
-            properties:
-              name:
-                type: string
-              is_admin:
-                type: string
-              email:
-                type: string
-              password:
-                type: string
-              fails_count:
-                type: string
-        - type: string
-          in: header
-          name: Authorization
-          description: 'base64(email:password:is_admin)'
-          required: true
+        - $ref: "#/parameters/newUser"
     delete:
-      summary: DELETE a user by user_id
+      summary: Delete an user by user_id
+      description: |
+        Delete user account.
+        (Available only for administrators)
       tags:
         - users
       operationId: deleteUser
@@ -159,19 +121,43 @@ paths:
           $ref: "#/definitions/403"
         '404':
           $ref: "#/definitions/404"
-      description: This can only be done by the logged in administrator.
-      parameters:
-        - type: string
-          in: header
-          name: Authorization
-          description: 'base64(email:password:is_admin)'
-          required: true
   /schedules:
+    parameters:
+      - $ref: "#/parameters/authorizationHeader"
     post:
-      summary: POST a schedule
+      summary: Create a schedule
       operationId: insertSchedule
+      description: |
+        Create a new schedule.
+        The created schedule is owned by the authorized user.
       tags:
         - schedules
+      responses:
+        '200':
+          description: OK
+        '400':
+          $ref: "#/definitions/400"
+        '401':
+          $ref: "#/definitions/401"
+        '404':
+          $ref: "#/definitions/404"
+      parameters:
+        - $ref: "#/parameters/newSchedule"
+  /schedules/{schedule_id}:
+    parameters:
+      - $ref: "#/parameters/authorizationHeader"
+      - type: integer
+        name: schedule_id
+        in: path
+        required: true
+    put:
+      summary: PUT a schedule by schedule_id
+      description: |
+        Change an exsisting schedule.
+        Schedules of the authorized user can be changed.
+      tags:
+        - schedules
+      operationId: updateSchedule
       responses:
         '200':
           description: OK
@@ -185,34 +171,11 @@ paths:
           $ref: "#/definitions/404"
       parameters:
         - $ref: "#/parameters/newSchedule"
-        - type: string
-          in: header
-          name: Authorization
-          description: 'base64(email:password)'
-          required: true
-      description: This can only be done by the logged in user.
-    parameters: []
-  '/schedules/{schedule_id}':
-    parameters:
-      - $ref: "#/parameters/authorizationHeader"
-      - type: integer
-        name: schedule_id
-        in: path
-        required: true
-    put:
-      summary: PUT a schedule by schedule_id
-      tags:
-        - schedules
-      operationId: updateSchedule
-      responses:
-        '200':
-          description: OK
-      description: This can only be done by the logged in user.
-      parameters:
-        - $ref: "#/parameters/newSchedule"
     delete:
       summary: DELETE a schedule by schedule_id
-      description: This can only be done by the logged in user.
+      description: |
+        Delete an exsisting schedule.
+        Schedules of the authorized user can be deleted.
       tags:
         - schedules
       operationId: deleteSchedule
@@ -227,8 +190,7 @@ paths:
           $ref: "#/definitions/403"
         '404':
           $ref: "#/definitions/404"
-
-  '/schedules/{year}/{month}':
+  /schedules/{year}/{month}:
     parameters:
       - $ref: "#/parameters/authorizationHeader"
       - type: string
@@ -241,6 +203,9 @@ paths:
         required: true
     get:
       summary: GET schedules by year/month
+      description: |
+        List schedules of authorized user.
+        Schedules of the authorized user can be deleted.
       tags:
         - schedules
       responses:
@@ -257,13 +222,11 @@ paths:
         '404':
           $ref: "#/definitions/404"
       operationId: getSchedules
-      description: This can only be done by the logged in user.
-
 
 securityDefinitions:
-  # Authorization:
-  #   type: basic
-  #   description: ''
+  Authorization:
+    type: basic
+    description: ''
 externalDocs:
   description: Find out more about Swagger
   url: 'http://swagger.io'
@@ -276,12 +239,13 @@ parameters:
   authorizationHeader:
     type: string
     in: header
+    required: true
     name: Authorization
     description: 'base64-encoded "email:password"'
-    required: true
   newSchedule:
     in: body
     name: bodystr
+    required: true
     schema:
       type: object
       properties:
@@ -304,6 +268,7 @@ parameters:
   newUser:
     in: body
     name: bodystr
+    required: true
     schema:
       type: object
       properties:
@@ -336,12 +301,12 @@ definitions:
       Authorization header is incorrect.
   '403':
     description: |
-      Forbiddon
-      User don't have permission.
+      Forbidden
+      User doesn't have permission.
   '404':
     description: |
       Not Found
-      Resource accessed does not exist.
+      Accessed resource does not exist.
   loginResponse:
     type: object
     properties:
@@ -380,3 +345,26 @@ definitions:
     items:
       type: array
       $ref: "#/definitions/scheduleWithId"
+  userWithId:
+    type: object
+    properties:
+      user_id:
+        type: integer
+      name:
+        type: string
+      is_admin:
+        type: string
+      email:
+        type: string
+      fails_count:
+        type: integer
+    example:
+      user_id: 96
+      name: "yamaguro"
+      is_admin: "false"
+      email: "chirichirige@symitems.com"
+      password: "chirichirige"
+  userList:
+    items:
+      type: array
+      $ref: "#/definitions/userWithId"
