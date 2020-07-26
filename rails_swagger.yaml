@@ -1,0 +1,327 @@
+swagger: '2.0'
+info:
+  description: >-
+    This is an API document for Symitems connections between React and Rails
+    API.
+  version: 1.0.0
+  title: API document
+  contact:
+    name: symitems.info
+    email: symitems.info@gmail.com
+host: 'localhost:3001'
+tags:
+  - name: login
+    description: Logs user into the system
+  - name: schedules
+    description: Operations about schedules
+  - name: users
+    description: Operations about user (available to administrators only)
+schemes:
+  - https
+  - http
+paths:
+  /login:
+    parameters: []
+    get:
+      summary: login
+      operationId: loginUser
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              user_id:
+                type: integer
+              name:
+                type: string
+              is_admin:
+                type: string
+              fails_count:
+                type: integer
+      description: This can only be done by the not logged in user.
+      parameters:
+        - type: string
+          in: header
+          name: Authorization
+          description: 'base64(email:password)'
+          required: true
+      tags:
+        - login
+  /users:
+    post:
+      summary: POST a user
+      tags:
+        - users
+      description: This can only be done by the logged in administrator.
+      operationId: createUser
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - type: string
+          in: header
+          name: Authorization
+          description: 'base64(email:password:is_admin)'
+          required: true
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              is_admin:
+                type: string
+              email:
+                type: string
+              password:
+                type: string
+            required:
+              - name
+              - is_admin
+              - email
+              - password
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties: {}
+          examples:
+            example-1: {}
+    get:
+      summary: GET all users
+      tags:
+        - users
+      operationId: getAllUsers
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            type: object
+            properties:
+              user_id:
+                type: integer
+              name:
+                type: string
+              is_admin:
+                type: string
+              email:
+                type: string
+              fails_count:
+                type: integer
+      parameters:
+        - type: string
+          in: header
+          name: Authorization
+          required: true
+          description: 'base64(email:password:is_admin)'
+      description: This can only be done by the logged in administrator.
+  '/users/{user_id}':
+    parameters:
+      - type: string
+        name: user_id
+        in: path
+        required: true
+    put:
+      summary: UPDATE a user by user_id
+      tags:
+        - users
+      operationId: updateUser
+      responses:
+        '200':
+          description: successful operation
+      description: This can only be done by the logged in administrator.
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              is_admin:
+                type: string
+              email:
+                type: string
+              password:
+                type: string
+              fails_count:
+                type: string
+        - type: string
+          in: header
+          name: Authorization
+          description: 'base64(email:password:is_admin)'
+          required: true
+    delete:
+      summary: DELETE a user by user_id
+      tags:
+        - users
+      operationId: deleteUser
+      responses:
+        '200':
+          description: successful operation
+      description: This can only be done by the logged in administrator.
+      parameters:
+        - type: string
+          in: header
+          name: Authorization
+          description: 'base64(email:password:is_admin)'
+          required: true
+  /schedules:
+    post:
+      summary: POST a schedule
+      operationId: insertSchedule
+      tags:
+        - schedules
+      responses:
+        '200':
+          description: OK
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties:
+              date:
+                type: string
+              title:
+                type: string
+              started_at:
+                type: string
+              ended_at:
+                type: string
+              detail:
+                type: string
+            required:
+              - date
+              - title
+        - type: string
+          in: header
+          name: Authorization
+          description: 'base64(email:password)'
+          required: true
+      description: This can only be done by the logged in user.
+    parameters: []
+  '/schedules/{schedule_id}':
+    parameters:
+      - type: integer
+        name: schedule_id
+        in: path
+        required: true
+    put:
+      summary: PUT a schedule by schedule_id
+      tags:
+        - schedules
+      operationId: updateSchedule
+      responses:
+        '200':
+          description: OK
+      description: This can only be done by the logged in user.
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties:
+              date:
+                type: string
+              title:
+                type: string
+              started_at:
+                type: string
+              ended_at:
+                type: string
+              detail:
+                type: string
+            required:
+              - date
+              - title
+        - type: string
+          in: header
+          name: Authorization
+          required: true
+          description: 'base64(email:password)'
+    delete:
+      summary: DELETE a schedule by schedule_id
+      tags:
+        - schedules
+      operationId: deleteSchedule
+      responses:
+        '200':
+          description: OK
+      description: This can only be done by the logged in user.
+      parameters:
+        - type: string
+          in: header
+          name: Authorization
+          required: true
+          description: 'base64(email:password)'
+  '/schedules/{year}/{month}':
+    parameters:
+      - type: string
+        name: year
+        in: path
+        required: true
+      - type: string
+        name: month
+        in: path
+        required: true
+    get:
+      summary: GET schedules by year/month
+      tags:
+        - schedules
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              schedule_id:
+                type: integer
+              date:
+                type: string
+              title:
+                type: string
+              started_at:
+                type: string
+              ended_at:
+                type: string
+              detail:
+                type: string
+        '400':
+          description: ''
+          schema:
+            type: object
+            properties: {}
+        '401':
+          description: Unauthorized
+          schema:
+            type: object
+            properties: {}
+        '404':
+          description: Not Found
+          schema:
+            type: object
+            properties: {}
+      operationId: getSchedules
+      parameters:
+        - type: string
+          in: header
+          name: Authorization
+          description: 'base64(email:password)'
+          required: true
+      description: This can only be done by the logged in user.
+securityDefinitions:
+  Authorization:
+    type: basic
+    description: ''
+definitions: {}
+externalDocs:
+  description: Find out more about Swagger
+  url: 'http://swagger.io'
+produces:
+  - application/json
+consumes:
+  - application/json
