@@ -81,7 +81,7 @@ paths:
         name: user_id
         in: path
         required: true
-    put:
+    patch:
       description: |
         Change an exsisting user account.
         (Available only for administrators)
@@ -101,7 +101,7 @@ paths:
         '404':
           $ref: "#/definitions/404"
       parameters:
-        - $ref: "#/parameters/newUser"
+        - $ref: "#/parameters/updateUser"
     delete:
       summary: Delete an user by user_id
       description: |
@@ -285,6 +285,26 @@ parameters:
         - is_admin
         - email
         - password
+      example:
+        name: "yamaguro"
+        is_admin: "false"
+        email: "chirichirige@symitems.com"
+        password: "chirichirige"
+  updateUser:
+    in: body
+    name: bodystr
+    required: true
+    schema:
+      type: object
+      properties:
+        name:
+          type: string
+        is_admin:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
       example:
         name: "yamaguro"
         is_admin: "false"
