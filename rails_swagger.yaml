@@ -383,7 +383,6 @@ definitions:
       name: "yamaguro"
       is_admin: "false"
       email: "chirichirige@symitems.com"
-      password: "chirichirige"
   userList:
     items:
       type: array
