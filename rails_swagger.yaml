@@ -262,8 +262,8 @@ parameters:
       example:
         date: "20200714"
         title: "Yamaguro is still in Fukui."
-        started_at: "1800"
-        ended_at: "1830"
+        started_at: "18:00"
+        ended_at: "18:30"
         detail: "I am in Fukui for anothor 1 year"
   newUser:
     in: body
@@ -358,8 +358,8 @@ definitions:
       schedule_id: 96
       date: "20200714"
       example: "Yamaguro is still in Fukui."
-      started_at: "1800"
-      ended_at: "1830"
+      started_at: "18:00"
+      ended_at: "18:30"
       detail: "I am in Fukui for anothor 1 year"
   listSchedules:
     items:
