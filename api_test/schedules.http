@@ -1,0 +1,152 @@
+@host = localhost:3001
+@id = 10
+
+# user1
+@email1 = Z2Vyb3VubmtvQGdtYWlsLmNvbQ==
+@pw1 = Z2Vyb3Vubmtv
+
+# user2
+@email2 = Y2hpcmljaGlyaWdlQGdtYWlsLmNvbQ==
+@pw2 = Y2hpcmljaGlyaWdl
+
+# user_ng
+@email_ng = bmc=
+@pw_ng = bmc=
+
+# POST(user1)
+POST http://{{host}}/schedules HTTP/1.1
+email: {{email1}}
+password: {{pw1}}
+Content-Type: application/json
+
+{
+  "date": "20200714",
+  "title": "Yamaguro is still in Fukui.",
+  "started_at": "1800",
+  "ended_at": "1830",
+  "detail": "I am in Fukui for anothor 1 year"
+}
+
+###
+# POST(user_ng)
+POST http://{{host}}/schedules HTTP/1.1
+email: {{email_ng}}
+password: {{pw_ng}}
+Content-Type: application/json
+
+{
+  "date": "20200714",
+  "title": "Yamaguro is still in Fukui.",
+  "started_at": "1800",
+  "ended_at": "1830",
+  "detail": "I am in Fukui for anothor 1 year"
+}
+
+###
+# PUT(user1)
+PUT http://{{host}}/schedules/{{id}} HTTP/1.1
+email: {{email1}}
+password: {{pw1}}
+Content-Type: application/json
+
+{
+  "date": "20200814",
+  "title": "Yamaguro is still in Fukui.",
+  "started_at": "1800",
+  "ended_at": "1830",
+  "detail": "I am in Fukui for anothor 1 year"
+}
+
+###
+# PUT(user2がuser1のscheduleを操作)
+PUT http://{{host}}/schedules/{{id}} HTTP/1.1
+email: {{email2}}
+password: {{pw2}}
+Content-Type: application/json
+
+{
+  "date": "20200714",
+  "title": "Yamaguro is still in Fukui.",
+  "started_at": "1800",
+  "ended_at": "1830",
+  "detail": "I am in Fukui for anothor 1 year"
+}
+
+###
+# PUT(user_ng)
+PUT http://{{host}}/schedules/{{id}} HTTP/1.1
+email: {{email_ng}}
+password: {{pw_ng}}
+Content-Type: application/json
+
+{
+  "date": "20200714",
+  "title": "Yamaguro is still in Fukui.",
+  "started_at": "1800",
+  "ended_at": "1830",
+  "detail": "I am in Fukui for anothor 1 year"
+}
+
+###
+# DELETE(user2がuser1のscheduleを操作)
+DELETE http://{{host}}/schedules/{{id}} HTTP/1.1
+email: {{email2}}
+password: {{pw2}}
+
+###
+# DELETE(user_ng)
+DELETE http://{{host}}/schedules/{{id}} HTTP/1.1
+email: {{email_ng}}
+password: {{pw_ng}}
+
+###
+# DELETE(user1)
+DELETE http://{{host}}/schedules/{{id}} HTTP/1.1
+email: {{email1}}
+password: {{pw1}}
+
+###
+# PUT(user1, 存在しないid)
+PUT http://{{host}}/schedules/{{id}} HTTP/1.1
+email: {{email1}}
+password: {{pw1}}
+Content-Type: application/json
+
+{
+  "date": "20200814",
+  "title": "Yamaguro is still in Fukui.",
+  "started_at": "1800",
+  "ended_at": "1830",
+  "detail": "I am in Fukui for anothor 1 year"
+}
+
+###
+# GET(user1)
+@year = 2020
+@month = 5
+GET http://{{host}}/schedules/{{year}}/{{month}} HTTP/1.1
+email: {{email1}}
+password: {{pw1}}
+
+###
+# GET(user2)
+@year = 2020
+@month = 5
+GET http://{{host}}/schedules/{{year}}/{{month}} HTTP/1.1
+email: {{email2}}
+password: {{pw2}}
+
+###
+# GET(user_ng)
+@year = 2020
+@month = 5
+GET http://{{host}}/schedules/{{year}}/{{month}} HTTP/1.1
+email: {{email_ng}}
+password: {{pw_ng}}
+
+###
+# GET(userなし)
+@year = 2020
+@month = 5
+GET http://{{host}}/schedules/{{year}}/{{month}} HTTP/1.1
+
