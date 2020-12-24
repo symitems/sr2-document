@@ -2,21 +2,20 @@
 @id = 10
 
 # user1
-@email1 = Z2Vyb3VubmtvQGdtYWlsLmNvbQ==
-@pw1 = Z2Vyb3Vubmtv
+@email1 = gerounnko@gmail.com
+@pw1 = gerounnko
 
 # user2
-@email2 = Y2hpcmljaGlyaWdlQGdtYWlsLmNvbQ==
-@pw2 = Y2hpcmljaGlyaWdl
+@email2 = chirichirige@gmail.com
+@pw2 = chirichirige
 
 # user_ng
-@email_ng = bmc=
-@pw_ng = bmc=
+@email_ng = ng
+@pw_ng = ng
 
 # POST(user1)
 POST http://{{host}}/schedules HTTP/1.1
-email: {{email1}}
-password: {{pw1}}
+Authorization: Basic {{email1}}:{{pw1}}
 Content-Type: application/json
 
 {
@@ -30,8 +29,7 @@ Content-Type: application/json
 ###
 # POST(user_ng)
 POST http://{{host}}/schedules HTTP/1.1
-email: {{email_ng}}
-password: {{pw_ng}}
+Authorization: Basic {{email_ng}}:{{pw_ng}}
 Content-Type: application/json
 
 {
@@ -45,8 +43,7 @@ Content-Type: application/json
 ###
 # PUT(user1)
 PUT http://{{host}}/schedules/{{id}} HTTP/1.1
-email: {{email1}}
-password: {{pw1}}
+Authorization: Basic {{email1}}:{{pw1}}
 Content-Type: application/json
 
 {
@@ -60,8 +57,7 @@ Content-Type: application/json
 ###
 # PUT(user2がuser1のscheduleを操作)
 PUT http://{{host}}/schedules/{{id}} HTTP/1.1
-email: {{email2}}
-password: {{pw2}}
+Authorization: Basic {{email2}}:{{pw2}}
 Content-Type: application/json
 
 {
@@ -75,8 +71,7 @@ Content-Type: application/json
 ###
 # PUT(user_ng)
 PUT http://{{host}}/schedules/{{id}} HTTP/1.1
-email: {{email_ng}}
-password: {{pw_ng}}
+Authorization: Basic {{email_ng}}:{{pw_ng}}
 Content-Type: application/json
 
 {
@@ -90,26 +85,22 @@ Content-Type: application/json
 ###
 # DELETE(user2がuser1のscheduleを操作)
 DELETE http://{{host}}/schedules/{{id}} HTTP/1.1
-email: {{email2}}
-password: {{pw2}}
+Authorization: Basic {{email2}}:{{pw2}}
 
 ###
 # DELETE(user_ng)
 DELETE http://{{host}}/schedules/{{id}} HTTP/1.1
-email: {{email_ng}}
-password: {{pw_ng}}
+Authorization: Basic {{email_ng}}:{{pw_ng}}
 
 ###
 # DELETE(user1)
 DELETE http://{{host}}/schedules/{{id}} HTTP/1.1
-email: {{email1}}
-password: {{pw1}}
+Authorization: Basic {{email1}}:{{pw1}}
 
 ###
 # PUT(user1, 存在しないid)
 PUT http://{{host}}/schedules/{{id}} HTTP/1.1
-email: {{email1}}
-password: {{pw1}}
+Authorization: Basic {{email1}}:{{pw1}}
 Content-Type: application/json
 
 {
@@ -125,24 +116,21 @@ Content-Type: application/json
 @year = 2020
 @month = 5
 GET http://{{host}}/schedules/{{year}}/{{month}} HTTP/1.1
-email: {{email1}}
-password: {{pw1}}
+Authorization: Basic {{email1}}:{{pw1}}
 
 ###
 # GET(user2)
 @year = 2020
 @month = 5
 GET http://{{host}}/schedules/{{year}}/{{month}} HTTP/1.1
-email: {{email2}}
-password: {{pw2}}
+Authorization: Basic {{email2}}:{{pw2}}
 
 ###
 # GET(user_ng)
 @year = 2020
 @month = 5
 GET http://{{host}}/schedules/{{year}}/{{month}} HTTP/1.1
-email: {{email_ng}}
-password: {{pw_ng}}
+Authorization: Basic {{email_ng}}:{{pw_ng}}
 
 ###
 # GET(userなし)
